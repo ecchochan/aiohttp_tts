@@ -51,6 +51,9 @@ async def debug(sid, args):
 
 
 import sys
+import aiohttp_jinja2
+aiohttp_jinja2.setup(app,
+    loader=jinja2.FileSystemLoader('templates'))
 
 @sio.event
 async def connect(sid, environ):
