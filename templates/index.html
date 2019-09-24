@@ -2,37 +2,424 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
-		<script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
+		
+		
+		<style>
+			.record-audio {
+				position: absolute;
+				right: 80px;
+				height: 24px;
+				top: 9px;
+				width: 24px;
+				border-radius: 50%;
+				background: #248A52;
+				align-items: center;
+				padding: 4px;
+			}
+				
+			.record-audio svg {
+				height: 20px;
+				padding: 2px;
+				fill: white;
+				display: inline-block;
+				position: relative;
+			}
+
+			.red{
+				background: #ff5858;
+			}
+
+			.message-box {
+			  flex: 0 1 40px;
+			  width: 100%;
+			  padding: 10px;
+			  position: relative;
+			}
+			.message-box .message-input {
+			  background: none;
+			  border: none;
+			  outline: none !important;
+			  resize: none;
+			  font-size: 1.2em;
+			  height: 1.7em;
+			  margin: 0;
+			  padding-right: 20px;
+			  width: calc(100% - 60px);
+			  overflow: hidden;
+			}
+			.message-box textarea:focus:-webkit-placeholder {
+			  color: transparent;
+			}
+			.message-box .message-submit {
+			  position: absolute;
+			  z-index: 1;
+			  height: 32px;
+			  top: 9px;
+			  right: 10px;
+			  border: none;
+			  color: #fff;
+			  background: #248A52;
+			  font-size: 1em;
+			  text-transform: uppercase;
+			  line-height: 1;
+			  padding: 6px 10px;
+			  border-radius: 10px;
+			  outline: none !important;
+			  transition: background .2s ease;
+			}
+			.message-box .message-submit:hover {
+			  background: #1D7745;
+			}
+		</style>
 		
 	</head>
+	
+
 
 	<body>
 	
-	<div class="chat">
-		<div class="chat-title">
-			<h1>Demo</h1>
-		</div>
-		<div class="messages">
-			<div class="messages-content"></div>
-		</div>
-		<div class="message-box">
-			<textarea spellcheck="false" type="text" class="message-input" placeholder="Type message..."></textarea>
-			<a class="record-audio">
-				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 544.172 544.172" xml:space="preserve">
-					<g>
+		<div class="chat">
+			<div class="chat-title">
+				<h1>Demo <a href="#" class="stop">stop</a></h1>
+			</div>
+			<div class="messages">
+				<div class="messages-content"></div>
+			</div>
+			<div class="message-box">
+				<textarea spellcheck="false" type="text" class="message-input" placeholder="Type message..."></textarea>
+				<a class="record-audio">
+					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 544.172 544.172" xml:space="preserve">
 						<g>
-							<path d="M439.528,209.298c-5.674,0-10.574,2.068-14.719,6.206c-4.143,4.149-6.211,9.058-6.211,14.719v41.867    c0,40.343-14.34,74.848-43.006,103.514c-28.672,28.666-63.176,42.999-103.507,42.999c-40.337,0-74.842-14.333-103.508-42.999    c-28.672-28.666-43.005-63.171-43.005-103.514v-41.861c0-5.661-2.075-10.563-6.212-14.719c-4.143-4.137-9.052-6.206-14.719-6.206    c-5.673,0-10.582,2.069-14.718,6.206c-4.144,4.149-6.212,9.058-6.212,14.719v41.861c0,48.188,16.071,90.099,48.238,125.741    c32.154,35.655,71.892,56.097,119.205,61.316v43.177h-83.721c-5.673,0-10.582,2.057-14.719,6.206    c-4.143,4.137-6.212,9.045-6.212,14.718c0,5.661,2.069,10.563,6.212,14.719c4.137,4.138,9.045,6.206,14.719,6.206h209.304    c5.668,0,10.576-2.068,14.719-6.206c4.137-4.149,6.211-9.058,6.211-14.719c0-5.673-2.074-10.575-6.211-14.718    c-4.143-4.149-9.051-6.206-14.719-6.206h-83.721v-43.177c47.307-5.227,87.037-25.667,119.205-61.316    c32.154-35.643,48.238-77.553,48.238-125.741v-41.861c0-5.661-2.076-10.563-6.213-14.719    C450.099,211.372,445.196,209.298,439.528,209.298z"></path>
-							<path d="M222.758,203.747h-55.325v38.384h55.325c8.452,0,15.3,6.848,15.3,15.3c0,8.452-6.848,15.3-15.3,15.3h-55.294    c0.153,28.501,10.374,52.932,30.71,73.269c20.49,20.502,45.135,30.734,73.911,30.734c28.777,0,53.416-10.232,73.912-30.734    c20.33-20.337,30.557-44.768,30.709-73.269h-53.365c-8.453,0-15.301-6.848-15.301-15.3c0-8.452,6.848-15.3,15.301-15.3h53.396    v-38.384h-53.396c-8.453,0-15.301-6.849-15.301-15.3s6.848-15.3,15.301-15.3h53.396v-40.796h-53.396    c-8.453,0-15.301-6.849-15.301-15.3s6.848-15.3,15.301-15.3h53.268c-0.672-27.521-10.82-51.212-30.605-71.017    C325.507,10.245,300.868,0,272.091,0c-28.782,0-53.421,10.245-73.911,30.734c-19.792,19.804-29.933,43.495-30.606,71.017h55.196    c8.452,0,15.3,6.848,15.3,15.3s-6.848,15.3-15.3,15.3h-55.325v40.796h55.325c8.452,0,15.3,6.848,15.3,15.3    S231.21,203.747,222.758,203.747z"></path>
+							<g>
+								<path d="M439.528,209.298c-5.674,0-10.574,2.068-14.719,6.206c-4.143,4.149-6.211,9.058-6.211,14.719v41.867    c0,40.343-14.34,74.848-43.006,103.514c-28.672,28.666-63.176,42.999-103.507,42.999c-40.337,0-74.842-14.333-103.508-42.999    c-28.672-28.666-43.005-63.171-43.005-103.514v-41.861c0-5.661-2.075-10.563-6.212-14.719c-4.143-4.137-9.052-6.206-14.719-6.206    c-5.673,0-10.582,2.069-14.718,6.206c-4.144,4.149-6.212,9.058-6.212,14.719v41.861c0,48.188,16.071,90.099,48.238,125.741    c32.154,35.655,71.892,56.097,119.205,61.316v43.177h-83.721c-5.673,0-10.582,2.057-14.719,6.206    c-4.143,4.137-6.212,9.045-6.212,14.718c0,5.661,2.069,10.563,6.212,14.719c4.137,4.138,9.045,6.206,14.719,6.206h209.304    c5.668,0,10.576-2.068,14.719-6.206c4.137-4.149,6.211-9.058,6.211-14.719c0-5.673-2.074-10.575-6.211-14.718    c-4.143-4.149-9.051-6.206-14.719-6.206h-83.721v-43.177c47.307-5.227,87.037-25.667,119.205-61.316    c32.154-35.643,48.238-77.553,48.238-125.741v-41.861c0-5.661-2.076-10.563-6.213-14.719    C450.099,211.372,445.196,209.298,439.528,209.298z"></path>
+								<path d="M222.758,203.747h-55.325v38.384h55.325c8.452,0,15.3,6.848,15.3,15.3c0,8.452-6.848,15.3-15.3,15.3h-55.294    c0.153,28.501,10.374,52.932,30.71,73.269c20.49,20.502,45.135,30.734,73.911,30.734c28.777,0,53.416-10.232,73.912-30.734    c20.33-20.337,30.557-44.768,30.709-73.269h-53.365c-8.453,0-15.301-6.848-15.301-15.3c0-8.452,6.848-15.3,15.301-15.3h53.396    v-38.384h-53.396c-8.453,0-15.301-6.849-15.301-15.3s6.848-15.3,15.301-15.3h53.396v-40.796h-53.396    c-8.453,0-15.301-6.849-15.301-15.3s6.848-15.3,15.301-15.3h53.268c-0.672-27.521-10.82-51.212-30.605-71.017    C325.507,10.245,300.868,0,272.091,0c-28.782,0-53.421,10.245-73.911,30.734c-19.792,19.804-29.933,43.495-30.606,71.017h55.196    c8.452,0,15.3,6.848,15.3,15.3s-6.848,15.3-15.3,15.3h-55.325v40.796h55.325c8.452,0,15.3,6.848,15.3,15.3    S231.21,203.747,222.758,203.747z"></path>
+							</g>
 						</g>
-					</g>
-				</svg>
-			</a>
-			<button type="submit" class="message-submit">Send</button>
+					</svg>
+				</a>
+				<button type="submit" class="message-submit">Send</button>
+			</div>
 		</div>
-	</div>
-	
+		
 	
 	</body>
+	
+	
+	<script>
+	
+
+		var socket = io.connect({transport: 'websocket', forceNew: true});
+			
+		//================= CONFIG =================
+		// Stream Audio
+		let bufferSize = 2048,
+			AudioContext,
+			context,
+			processor,
+			input,
+			globalStream;
+
+		//vars
+		let inputElement = document.querySelector('textarea'),
+			streamStreaming = false;
+
+			
+		let stt_callback = function (data) {
+			//socket.emit('debug',data)
+			console.log(data);
+			
+			var dataFinal = undefined || data.results[0].isFinal;
+
+			var result = data.results[0].alternatives[0].transcript;
+			
+			
+			inputElement.value = result;
+			
+			if (dataFinal === false) {
+				
+
+			} else if (dataFinal === true) {
+				
+				console.log("Google Speech sent 'final' Sentence.");
+				insertMessage();
+			}
+		}
+			
+
+		//audioStream constraints
+		const constraints = {
+			audio: true,
+			video: false
+		};
+
+		const encoding = 'LINEAR16';
+		const sampleRateHertz = 16000;
+		const languageCode = 'en-US'; //en-US
+		function initRecording() {
+			socket.emit('startGoogleCloudStream', {
+				config: {
+					rate: sampleRateHertz,
+					format: encoding,
+					language: languageCode,
+					model: 'command_and_search', // 'command_and_search', 'default',
+					use_enhanced: true,
+					context:{
+					  phrases: [
+							// ************************************************************
+							// ************************************************************
+							// ***
+							// ***                  Server generated config
+							// ***
+							// ************************************************************
+							// ************************************************************
+							//
+							//{% for example in phrases_examples %}
+							//	"{{ example }}",
+							//{% endfor %}
+						],
+					  "boost": 2
+					 },
+					
+				},
+				metadata: {
+					interaction_type: 'VOICE_SEARCH',
+					microphone_distance: 'NEARFIELD',
+					original_media_type: 'AUDIO',
+					recording_device_type: 'SMARTPHONE',
+					
+					// ************************************************************
+					// ************************************************************
+					// ***
+					// ***                  Server generated config
+					// ***
+					// ************************************************************
+					// ************************************************************
+					//
+					//audio_topic: '{{ audio_topic }}',
+					//industry_naics_code_of_audio: {{ industry_naics_code_of_audio }},
+					
+					audio_topic: 'testing',
+					industry_naics_code_of_audio: 61,
+					
+					
+					
+				}}); //init socket Google Speech Connection
+			streamStreaming = true;
+			
+			
+			
+			
+			AudioContext = window.AudioContext || window.webkitAudioContext;
+			context = new AudioContext({
+				// if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
+				latencyHint: 'interactive',
+			});
+			processor = context.createScriptProcessor(bufferSize, 1, 1);
+			processor.connect(context.destination);
+			context.resume();
+
+
+			navigator.mediaDevices.getUserMedia(constraints)
+				.then((stream) => {
+					globalStream = stream;
+					input = context.createMediaStreamSource(stream);
+					input.connect(processor);
+
+					processor.onaudioprocess = function (e) {
+						microphoneProcess(e);
+					};
+			
+			
+			}).catch(e=>alert(e)
+					);
+
+
+			
+		}
+
+		function microphoneProcess(e) {
+			var left = e.inputBuffer.getChannelData(0);
+			// var left16 = convertFloat32ToInt16(left); // old 32 to 16 function
+			var left16 = downsampleBuffer(left, 44100, 16000)
+			socket.emit('binaryData', left16);
+		}
+
+
+
+
+		var startButton = document.querySelector(".record-audio");
+		startButton.addEventListener("click", toggleRecording);
+
+		function toggleRecording(){
+			if (startButton.classList.contains('red')){
+				stopRecording();
+			}else{
+				startRecording();
+				
+			}
+
+		}
+
+		function startRecording() {
+			startButton.classList.add('red');
+			initRecording();
+		}
+
+		function stopRecording() {
+			startButton.classList.remove('red');
+			streamStreaming = false;
+			socket.emit('endGoogleCloudStream', '');
+
+			let track = globalStream.getTracks()[0];
+			track.stop();
+
+			input.disconnect(processor);
+			processor.disconnect(context.destination);
+			context.close().then(function () {
+				input = null;
+				processor = null;
+				context = null;
+				AudioContext = null;
+				startButton.disabled = false;
+			});
+
+		}
+
+		socket.on('speechData', stt_callback);
+
+
+
+		window.onbeforeunload = function () {
+			if (streamStreaming) { socket.emit('endGoogleCloudStream', ''); }
+		};
+			
+			
+		// sampleRateHertz 16000 //saved sound is awefull
+		function convertFloat32ToInt16(buffer) {
+			let l = buffer.length;
+			let buf = new Int16Array(l / 3);
+
+			while (l--) {
+				if (l % 3 == 0) {
+					buf[l / 3] = buffer[l] * 0xFFFF;
+				}
+			}
+			return buf.buffer
+		}
+
+		var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
+			if (outSampleRate == sampleRate) {
+				return buffer;
+			}
+			if (outSampleRate > sampleRate) {
+				throw "downsampling rate show be smaller than original sample rate";
+			}
+			var sampleRateRatio = sampleRate / outSampleRate;
+			var newLength = Math.round(buffer.length / sampleRateRatio);
+			var result = new Int16Array(newLength);
+			var offsetResult = 0;
+			var offsetBuffer = 0;
+			while (offsetResult < result.length) {
+				var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+				var accum = 0, count = 0;
+				for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+					accum += buffer[i];
+					count++;
+				}
+
+				result[offsetResult] = Math.min(1, accum / count) * 0x7FFF;
+				offsetResult++;
+				offsetBuffer = nextOffsetBuffer;
+			}
+			return result.buffer;
+		}
+
+		function capitalize(s) {
+			if (s.length < 1) {
+				return s;
+			}
+			return s.charAt(0).toUpperCase() + s.slice(1);
+		}
+			
+			
+			
+		// When the page is first loaded, audio cannot be played until someone clicked on something.
+		//
+		// https://stackoverflow.com/questions/53775957/playing-audio-file-returns-uncaught-in-promise-but-works-in-console
+		var audio;
+			
+		function speak(text){
+			shutup();
+			audio = new Audio('tts?text='+encodeURI(text));
+			var play = function(){
+				audio.play().catch(function() {
+					setTimeout(play,100);
+				});
+			}
+			play()
+		}
+			
+			
+		function shutup(){
+			if (audio)
+				audio.pause();
+		}
+			
+			
+		function toggleAuto_speak(){
+			if (startButton.classList.contains('red')){
+				stopRecording();
+			}else{
+				startRecording();
+				shutup()
+				
+			}
+
+		}
+			
+		var el = document.querySelector('.stop');
+		el.addEventListener("click", function(e){
+			shutup();
+		}, false);
+			
+		$('.message-submit').click(function() {
+		    insertMessage();
+		});
+	
+		$(window).on('keydown', function(e) {
+		  if (e.which == 13) {
+			insertMessage();
+			return false;
+		  }
+		})
+		
+		
+				
+		function insertMessage() {
+			
+		  msg = $('.message-input').val();
+		  if ($.trim(msg) == '') {
+			return false;
+		  }
+		  var div = $('<p></p>').text(msg)
+		  div.appendTo($('.messages-content')).addClass('new');
+		  
+		  $('.message-input').val(null);
+		  
+		  setTimeout(function(e){
+			speak(div.text());
+
+		  },500)
+		}
+				
+		var $messages = $('.messages-content'),
+			d, h, m,
+			i = 0;
+
+		  
+
+	</script>
 
 </html>
